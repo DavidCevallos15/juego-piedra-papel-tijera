@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <script src="../js/logic.js"></script>
+    <script src="../js/sounds.js"></script>
+    <!-- llamamos a bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center">
+        <h1 class="mb-4 text-center">Piedra, Papel o Tijera</h1>
+    <div class="mb-3 btn-wrap d-flex flex-wrap justify-content-center gap-3">
+            <button class="animated-btn" onclick="play('piedra')">🪨 Piedra</button>
+            <button class="animated-btn" onclick="play('papel')">📄 Papel</button>
+            <button class="animated-btn" onclick="play('tijera')">✂️ Tijera</button>
+        </div>
+        <div class="mb-3">
+            <button id="darkModeToggle" type="button" class="btn btn-outline-dark" data-bs-toggle="button" autocomplete="off">
+                Modo oscuro
+            </button>
+        </div>
+    <div id="resultado" class="alert alert-info text-center w-100 d-none"></div>
+        <footer class="mt-5 w-100 text-center">
+            <p>&copy; 2025 Juego Piedra Papel o Tijera</p>
+        </footer>
+    </div>
+    <script>
+        // Modo oscuro Bootstrap 5.3
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('bg-dark');
+            document.body.classList.toggle('text-light');
+            // Cambia el color de la alerta si está visible
+            const resultado = document.getElementById('resultado');
+            if (!resultado.classList.contains('d-none')) {
+                resultado.classList.toggle('alert-info');
+                resultado.classList.toggle('alert-dark');
+            }
+        });
+    </script>
+</body>
+</html>

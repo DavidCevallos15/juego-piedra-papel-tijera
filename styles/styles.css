@@ -1,0 +1,138 @@
+/* Animaciones y colores divertidos */
+.animated-btn {
+    transition: transform 0.1s, box-shadow 0.2s, filter 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ff8a00, #e52e71, #42e695);
+    color: #fff !important;
+    border: none;
+    outline: none;
+    border-radius: 2rem;
+    margin: 0 0.5rem;
+    padding: 0.75rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+.animated-btn::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: radial-gradient(160px 160px at var(--bx, 50%) var(--by, 50%), rgba(255,255,255,0.45), rgba(255,255,255,0) 60%);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+.animated-btn:hover::before { opacity: 1; }
+.animated-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.animated-btn:active { transform: scale(0.95) rotate(-2deg); }
+.animated-btn:active {
+    transform: scale(0.95) rotate(-2deg);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+.animated-btn:hover {
+    filter: brightness(1.1) drop-shadow(0 0 10px #fff176);
+    background-position: right center;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+#resultado.animated-result {
+    animation: popIn 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #42e695, #3bb2b8, #e52e71);
+    color: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px rgba(229,46,113,0.15);
+    border: none;
+}
+
+body {
+    background: linear-gradient(135deg, #f8ffae 0%, #43cea2 100%);
+    min-height: 100vh;
+    transition: background 0.5s;
+    --mx: 50vw; /* mouse x */
+    --my: 50vh; /* mouse y */
+}
+
+body.bg-dark {
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+
+/* Luz que sigue al cursor (overlay suave) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(600px 600px at var(--mx) var(--my), rgba(255,255,255,0.22), rgba(255,255,255,0) 60%);
+    transition: opacity 0.3s ease;
+    mix-blend-mode: soft-light;
+    z-index: 999;
+}
+body.bg-dark::before {
+    background: radial-gradient(500px 500px at var(--mx) var(--my), rgba(255,255,255,0.08), rgba(255,255,255,0) 60%);
+}
+
+/* Asegurar que el contenido esté sobre el fondo pero bajo el overlay si hiciera falta */
+/* El contenido puede quedarse con z-index normal; el overlay usa pointer-events:none */
+}
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+h1 {
+    color: #333;
+}
+
+p {
+    line-height: 1.6;
+}
+
+
+/* Los botones usan Bootstrap, no sobrescribir */
+
+
+/* El alert de resultado usa Bootstrap */
+
+
+/* .hidden ya no se usa, Bootstrap usa d-none */
+
+
+footer {
+    background-color: transparent;
+    padding: 10px 0;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .btn-wrap { gap: 0.75rem !important; }
+    .animated-btn {
+        font-size: 1.1rem;
+        padding: 0.65rem 1.25rem;
+        border-radius: 1.25rem;
+        width: calc(50% - 0.75rem);
+        min-width: 140px;
+    }
+}
+@media (max-width: 380px) {
+    .animated-btn { width: 100%; min-width: unset; }
+}
+
+/* Preferencia de reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

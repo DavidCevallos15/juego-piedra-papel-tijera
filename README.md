@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# juego-piedra-papel-tijera
-=======
 # Piedra, Papel o Tijera – Bootstrap + Animaciones
 
 Juego web de Piedra, Papel o Tijera con Bootstrap 5.3, diseño centrado y responsive, modo oscuro, animaciones divertidas, luz que sigue al cursor/tacto, sonidos y confirmación inline para volver a jugar.

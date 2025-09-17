@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Piedra, Papel o Tijera</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container-fluid bg-primary-gradient min-vh-100">
+        <div class="container py-5">
+            <!-- Header -->
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h1 class="display-4 text-white fw-bold mb-3">
+                        <i class="fas fa-hand-rock me-3"></i>
+                        Piedra, Papel o Tijera
+                        <i class="fas fa-hand-scissors ms-3"></i>
+                    </h1>
+                    <p class="lead text-white-50">¡Desafía a la computadora en este clásico juego!</p>
+                </div>
+            </div>
+
+            <!-- Game Area -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    <!-- Score Board -->
+                    <div class="card mb-4 shadow-lg">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h5 class="card-title text-primary">Jugador</h5>
+                                    <h2 class="display-4 text-primary fw-bold" id="playerScore">0</h2>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="card-title text-muted">VS</h5>
+                                    <button class="btn btn-outline-danger btn-sm" id="resetBtn">
+                                        <i class="fas fa-redo"></i> Reiniciar
+                                    </button>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="card-title text-danger">Computadora</h5>
+                                    <h2 class="display-4 text-danger fw-bold" id="computerScore">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Choices Display -->
+                    <div class="card mb-4 shadow-lg">
+                        <div class="card-body">
+                            <div class="row text-center align-items-center">
+                                <div class="col-5">
+                                    <h6 class="text-muted mb-3">Tu elección</h6>
+                                    <div class="choice-display bg-light rounded-circle mx-auto mb-3" id="playerChoice">
+                                        <i class="fas fa-question text-muted"></i>
+                                    </div>
+                                    <p class="text-muted small mb-0">Jugador</p>
+                                </div>
+                                <div class="col-2">
+                                    <h3 class="text-muted">VS</h3>
+                                </div>
+                                <div class="col-5">
+                                    <h6 class="text-muted mb-3">Computadora</h6>
+                                    <div class="choice-display bg-light rounded-circle mx-auto mb-3" id="computerChoice">
+                                        <i class="fas fa-question text-muted"></i>
+                                    </div>
+                                    <p class="text-muted small mb-0">Computadora</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Result -->
+                    <div class="card mb-4 shadow-lg" id="resultCard" style="display: none;">
+                        <div class="card-body text-center">
+                            <h4 id="resultText" class="mb-0"></h4>
+                        </div>
+                    </div>
+
+                    <!-- Player Options -->
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <h5 class="card-title text-center mb-4">Elige tu jugada:</h5>
+                            <div class="row g-3">
+                                <div class="col-4">
+                                    <button class="btn btn-outline-primary btn-choice w-100 h-100 py-4" data-choice="rock">
+                                        <i class="fas fa-hand-rock fa-3x mb-3"></i>
+                                        <div class="fw-bold">Piedra</div>
+                                    </button>
+                                </div>
+                                <div class="col-4">
+                                    <button class="btn btn-outline-primary btn-choice w-100 h-100 py-4" data-choice="paper">
+                                        <i class="fas fa-hand-paper fa-3x mb-3"></i>
+                                        <div class="fw-bold">Papel</div>
+                                    </button>
+                                </div>
+                                <div class="col-4">
+                                    <button class="btn btn-outline-primary btn-choice w-100 h-100 py-4" data-choice="scissors">
+                                        <i class="fas fa-hand-scissors fa-3x mb-3"></i>
+                                        <div class="fw-bold">Tijera</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Rules -->
+                    <div class="card mt-4 shadow-lg">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Reglas del juego
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="small mb-1"><i class="fas fa-hand-rock text-primary me-2"></i><strong>Piedra</strong> vence a <i class="fas fa-hand-scissors text-danger me-1"></i>Tijera</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="small mb-1"><i class="fas fa-hand-paper text-primary me-2"></i><strong>Papel</strong> vence a <i class="fas fa-hand-rock text-danger me-1"></i>Piedra</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="small mb-1"><i class="fas fa-hand-scissors text-primary me-2"></i><strong>Tijera</strong> vence a <i class="fas fa-hand-paper text-danger me-1"></i>Papel</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

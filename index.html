@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piedra, Papel o Tijera</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --bg-gradient-light: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --bg-gradient-dark: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-gradient-light);
+            position: relative;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        [data-bs-theme="dark"] body {
+            background: var(--bg-gradient-dark);
+        }
+
+        /* Luminous overlay that follows cursor */
+        .luminous-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                        rgba(255, 255, 255, 0.1) 0%, 
+                        rgba(255, 255, 255, 0.05) 30%, 
+                        transparent 70%);
+            transition: background 0.3s ease;
+        }
+
+        [data-bs-theme="dark"] .luminous-overlay {
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                        rgba(100, 150, 255, 0.15) 0%, 
+                        rgba(100, 150, 255, 0.08) 30%, 
+                        transparent 70%);
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        [data-bs-theme="dark"] .game-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        [data-bs-theme="dark"] .game-title {
+            background: linear-gradient(135deg, #64b5f6, #42a5f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .choice-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .choice-btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .choice-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .choice-btn {
+                transition: none;
+            }
+            .choice-btn:hover {
+                transform: none;
+            }
+            .luminous-overlay {
+                display: none;
+            }
+            .pop-animation {
+                animation: none !important;
+            }
+        }
+
+        .result-section {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .result-text {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            min-height: 3rem;
+        }
+
+        .choices-display {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .choice-display {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            min-width: 150px;
+        }
+
+        .choice-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .choice-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Result states */
+        .result-win {
+            color: #28a745;
+            animation: pop 0.6s ease-out;
+        }
+
+        .result-lose {
+            color: #dc3545;
+            animation: pop 0.6s ease-out;
+        }
+
+        .result-tie {
+            color: #ffc107;
+            animation: pop 0.6s ease-out;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pop-animation {
+            animation: pop 0.6s ease-out;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .replay-confirmation {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .replay-confirmation.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .replay-btn {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        .replay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            min-width: 100px;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        [data-bs-theme="dark"] .score-number {
+            color: #64b5f6;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .game-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .game-title {
+                font-size: 2rem;
+            }
+
+            .choice-btn {
+                width: 90px;
+                height: 90px;
+                font-size: 2rem;
+            }
+
+            .choices-display {
+                gap: 1rem;
+            }
+
+            .choice-display {
+                min-width: 120px;
+            }
+
+            .choice-icon {
+                font-size: 3rem;
+            }
+
+            .score-display {
+                gap: 1rem;
+            }
+
+            .dark-mode-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Luminous overlay -->
+    <div class="luminous-overlay"></div>
+
+    <!-- Dark mode toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Cambiar modo oscuro">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Main container -->
+    <div class="main-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="game-card">
+                        <h1 class="game-title">🎮 Piedra, Papel o Tijera</h1>
+                        
+                        <!-- Score display -->
+                        <div class="score-display">
+                            <div class="score-item">
+                                <div class="score-number" id="playerScore">0</div>
+                                <div class="score-label">Jugador</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-number" id="ties">0</div>
+                                <div class="score-label">Empates</div>
+                            </div>
+                            <div class="score-item">
+                                <div class="score-number" id="computerScore">0</div>
+                                <div class="score-label">Computadora</div>
+                            </div>
+                        </div>
+
+                        <!-- Game choices -->
+                        <div class="text-center mb-4">
+                            <h3 class="mb-4">Elige tu jugada:</h3>
+                            <div class="d-flex justify-content-center gap-4 flex-wrap">
+                                <button class="choice-btn" data-choice="rock" title="Piedra">
+                                    🪨
+                                </button>
+                                <button class="choice-btn" data-choice="paper" title="Papel">
+                                    📄
+                                </button>
+                                <button class="choice-btn" data-choice="scissors" title="Tijera">
+                                    ✂️
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Result section -->
+                        <div class="result-section">
+                            <div class="result-text" id="resultText"></div>
+                            <div class="choices-display" id="choicesDisplay" style="display: none;">
+                                <div class="choice-display">
+                                    <span class="choice-icon" id="playerChoice"></span>
+                                    <div class="choice-label">Tu elección</div>
+                                </div>
+                                <div class="choice-display">
+                                    <span class="choice-icon">⚔️</span>
+                                    <div class="choice-label">VS</div>
+                                </div>
+                                <div class="choice-display">
+                                    <span class="choice-icon" id="computerChoice"></span>
+                                    <div class="choice-label">Computadora</div>
+                                </div>
+                            </div>
+
+                            <!-- Replay confirmation -->
+                            <div class="replay-confirmation" id="replayConfirmation">
+                                <p class="mb-3">¿Quieres jugar otra vez?</p>
+                                <button class="replay-btn" id="playAgainBtn">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Jugar de nuevo
+                                </button>
+                                <button class="replay-btn" id="newGameBtn" style="background: var(--secondary-gradient);">
+                                    <i class="bi bi-plus-circle me-2"></i>Nuevo juego
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        class RockPaperScissorsGame {
+            constructor() {
+                this.choices = {
+                    rock: { emoji: '🪨', name: 'Piedra' },
+                    paper: { emoji: '📄', name: 'Papel' },
+                    scissors: { emoji: '✂️', name: 'Tijera' }
+                };
+                
+                this.scores = {
+                    player: 0,
+                    computer: 0,
+                    ties: 0
+                };
+
+                this.sounds = {
+                    click: this.createSound(800, 0.1, 'sine'),
+                    win: this.createSound([523, 659, 784], 0.3, 'triangle'),
+                    lose: this.createSound([392, 330, 262], 0.3, 'sawtooth'),
+                    tie: this.createSound([440, 440], 0.2, 'square')
+                };
+
+                this.init();
+            }
+
+            createSound(frequencies, duration, type = 'sine') {
+                return () => {
+                    if (window.AudioContext || window.webkitAudioContext) {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const freqs = Array.isArray(frequencies) ? frequencies : [frequencies];
+                        
+                        freqs.forEach((freq, index) => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            oscillator.type = type;
+                            
+                            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                            
+                            oscillator.start(audioContext.currentTime + index * 0.1);
+                            oscillator.stop(audioContext.currentTime + duration + index * 0.1);
+                        });
+                    }
+                };
+            }
+
+            init() {
+                this.bindEvents();
+                this.setupLuminousOverlay();
+                this.setupDarkMode();
+                this.updateScoreDisplay();
+            }
+
+            bindEvents() {
+                // Game choice buttons
+                document.querySelectorAll('.choice-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.sounds.click();
+                        const choice = e.target.dataset.choice;
+                        this.playRound(choice);
+                    });
+                });
+
+                // Replay buttons
+                document.getElementById('playAgainBtn').addEventListener('click', () => {
+                    this.sounds.click();
+                    this.resetRound();
+                });
+
+                document.getElementById('newGameBtn').addEventListener('click', () => {
+                    this.sounds.click();
+                    this.resetGame();
+                });
+
+                // Dark mode toggle
+                document.getElementById('darkModeToggle').addEventListener('click', () => {
+                    this.sounds.click();
+                    this.toggleDarkMode();
+                });
+            }
+
+            setupLuminousOverlay() {
+                const overlay = document.querySelector('.luminous-overlay');
+                let isTouch = false;
+
+                // Mouse events
+                document.addEventListener('mousemove', (e) => {
+                    if (!isTouch && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                        const x = (e.clientX / window.innerWidth) * 100;
+                        const y = (e.clientY / window.innerHeight) * 100;
+                        overlay.style.setProperty('--mouse-x', `${x}%`);
+                        overlay.style.setProperty('--mouse-y', `${y}%`);
+                    }
+                });
+
+                // Touch events
+                document.addEventListener('touchstart', () => { isTouch = true; });
+                document.addEventListener('touchmove', (e) => {
+                    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                        const touch = e.touches[0];
+                        const x = (touch.clientX / window.innerWidth) * 100;
+                        const y = (touch.clientY / window.innerHeight) * 100;
+                        overlay.style.setProperty('--mouse-x', `${x}%`);
+                        overlay.style.setProperty('--mouse-y', `${y}%`);
+                    }
+                });
+            }
+
+            setupDarkMode() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+                    this.updateDarkModeIcon(savedTheme === 'dark');
+                } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-bs-theme', 'dark');
+                    this.updateDarkModeIcon(true);
+                }
+            }
+
+            toggleDarkMode() {
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                this.updateDarkModeIcon(newTheme === 'dark');
+            }
+
+            updateDarkModeIcon(isDark) {
+                const icon = document.querySelector('#darkModeToggle i');
+                icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+            }
+
+            playRound(playerChoice) {
+                const computerChoice = this.getComputerChoice();
+                const result = this.determineWinner(playerChoice, computerChoice);
+                
+                this.updateScores(result);
+                this.displayResult(playerChoice, computerChoice, result);
+                this.playResultSound(result);
+                
+                // Show replay confirmation after 3 seconds
+                setTimeout(() => {
+                    this.showReplayConfirmation();
+                }, 3000);
+            }
+
+            getComputerChoice() {
+                const choices = Object.keys(this.choices);
+                return choices[Math.floor(Math.random() * choices.length)];
+            }
+
+            determineWinner(playerChoice, computerChoice) {
+                if (playerChoice === computerChoice) return 'tie';
+                
+                const winConditions = {
+                    rock: 'scissors',
+                    paper: 'rock',
+                    scissors: 'paper'
+                };
+                
+                return winConditions[playerChoice] === computerChoice ? 'win' : 'lose';
+            }
+
+            updateScores(result) {
+                if (result === 'win') {
+                    this.scores.player++;
+                } else if (result === 'lose') {
+                    this.scores.computer++;
+                } else {
+                    this.scores.ties++;
+                }
+                this.updateScoreDisplay();
+            }
+
+            updateScoreDisplay() {
+                document.getElementById('playerScore').textContent = this.scores.player;
+                document.getElementById('computerScore').textContent = this.scores.computer;
+                document.getElementById('ties').textContent = this.scores.ties;
+            }
+
+            displayResult(playerChoice, computerChoice, result) {
+                const resultText = document.getElementById('resultText');
+                const choicesDisplay = document.getElementById('choicesDisplay');
+                const playerChoiceEl = document.getElementById('playerChoice');
+                const computerChoiceEl = document.getElementById('computerChoice');
+
+                // Update choices display
+                playerChoiceEl.textContent = this.choices[playerChoice].emoji;
+                computerChoiceEl.textContent = this.choices[computerChoice].emoji;
+
+                // Show choices with animation
+                choicesDisplay.style.display = 'flex';
+                choicesDisplay.classList.add('pop-animation');
+
+                // Update result text with color and animation
+                resultText.className = 'result-text';
+                setTimeout(() => {
+                    const messages = {
+                        win: '🎉 ¡Ganaste!',
+                        lose: '😔 Perdiste',
+                        tie: '🤝 ¡Empate!'
+                    };
+                    
+                    resultText.textContent = messages[result];
+                    resultText.classList.add(`result-${result}`, 'pop-animation');
+                }, 100);
+
+                // Hide replay confirmation
+                this.hideReplayConfirmation();
+            }
+
+            playResultSound(result) {
+                this.sounds[result]();
+            }
+
+            showReplayConfirmation() {
+                const confirmation = document.getElementById('replayConfirmation');
+                confirmation.classList.add('show');
+            }
+
+            hideReplayConfirmation() {
+                const confirmation = document.getElementById('replayConfirmation');
+                confirmation.classList.remove('show');
+            }
+
+            resetRound() {
+                const resultText = document.getElementById('resultText');
+                const choicesDisplay = document.getElementById('choicesDisplay');
+                
+                resultText.textContent = '';
+                resultText.className = 'result-text';
+                choicesDisplay.style.display = 'none';
+                choicesDisplay.classList.remove('pop-animation');
+                
+                this.hideReplayConfirmation();
+            }
+
+            resetGame() {
+                this.scores = { player: 0, computer: 0, ties: 0 };
+                this.updateScoreDisplay();
+                this.resetRound();
+            }
+        }
+
+        // Initialize game when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new RockPaperScissorsGame();
+        });
+
+        // Handle page visibility change to pause/resume animations
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                document.querySelector('.luminous-overlay').style.opacity = '0';
+            } else {
+                document.querySelector('.luminous-overlay').style.opacity = '1';
+            }
+        });
+    </script>
+</body>
+</html>

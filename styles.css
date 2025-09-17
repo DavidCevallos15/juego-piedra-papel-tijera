@@ -1,0 +1,194 @@
+/* Custom Styles for Rock Paper Scissors Game */
+
+/* Background gradient */
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+/* Custom card styling */
+.card {
+    border: none;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* Choice display circles */
+.choice-display {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    border: 3px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.choice-display.active {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.1) !important;
+    transform: scale(1.1);
+}
+
+.choice-display.winner {
+    border-color: #198754;
+    background: rgba(25, 135, 84, 0.1) !important;
+    box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);
+    animation: pulse-winner 1s ease-in-out;
+}
+
+.choice-display.loser {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.1) !important;
+    opacity: 0.7;
+}
+
+/* Button styling */
+.btn-choice {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    border-width: 2px;
+    min-height: 150px;
+}
+
+.btn-choice:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.btn-choice:active {
+    transform: translateY(-2px);
+}
+
+.btn-choice i {
+    transition: all 0.3s ease;
+}
+
+.btn-choice:hover i {
+    transform: scale(1.2);
+    color: #0d6efd;
+}
+
+/* Result styling */
+#resultCard.show {
+    display: block !important;
+    animation: slideDown 0.5s ease-out;
+}
+
+#resultCard.win {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border-left: 5px solid #28a745;
+}
+
+#resultCard.lose {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border-left: 5px solid #dc3545;
+}
+
+#resultCard.tie {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border-left: 5px solid #ffc107;
+}
+
+/* Animations */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse-winner {
+    0%, 100% {
+        transform: scale(1.1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Score animation */
+.score-update {
+    animation: scoreJump 0.5s ease-out;
+}
+
+@keyframes scoreJump {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+        color: #ffc107;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .choice-display {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+    
+    .btn-choice {
+        min-height: 120px;
+        padding: 15px 10px;
+    }
+    
+    .btn-choice i {
+        font-size: 2rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .choice-display {
+        width: 70px;
+        height: 70px;
+        font-size: 1.5rem;
+    }
+    
+    .btn-choice {
+        min-height: 100px;
+        padding: 10px 5px;
+    }
+    
+    .btn-choice i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Loading animation */
+.loading {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Custom shadows */
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/* Text styling */
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
